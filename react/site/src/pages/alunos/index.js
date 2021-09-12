@@ -9,6 +9,16 @@ import { useState, useEffect } from 'react';
 import Api from '../../services/api'; 
 
 
+import {ToastContainer, toast} from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css';
+
+import {loading}  from 'loading-progress-bar';
+
+import {confirmAlert} from 'react-confirm-alert'; 
+
+
+
+
 const api = new Api(); 
 
 export default function Index() {
@@ -32,13 +42,31 @@ export default function Index() {
 
 
     async function inserir(){
+        loading.current.confirmAlert(); 
+
 
         if( idAlterando == 0){
             let r = await api.inserir(nome, chamada, curso, turma); 
-            alert('Aluno inserido!');
+            if(r.error)
+              toast.dark(r.error)
+                 
+              else 
+              toast.success('Aluno cadastrado', {
+                  icon: "🚀"
+              }); 
+
         } else {
             let r = await api.alterar(idAlterando, nome, chamada, curso, turma)
-            alert('Aluno Alterado!');   
+            if(r.erro)
+              toast.success('Aluno alterado', {
+                  theme: "dark"
+              }); 
+              else{
+                toast.success('Aluno alterado', {
+                    theme: "dark"
+                }); 
+              }
+  
         }
 
         LimparAluno(); 
@@ -80,7 +108,9 @@ export default function Index() {
     }, [])
 
     return (
+      
         <Container>
+            <ToastContainer/> 
             <Menu />
             <Conteudo>
                 <Cabecalho />
