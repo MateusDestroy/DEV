@@ -47,7 +47,7 @@ export default function Index() {
 
 
     async function inserir(){
-    
+        loading.current.continuousStart();
         if( idAlterando == 0){
             let r = await api.inserir(nome, chamada, curso, turma); 
             if(r.error)
@@ -71,26 +71,34 @@ export default function Index() {
               }
   
         }
-
+        loading.current.complete(); 
         LimparAluno(); 
         listar(); 
     }
 
     async function LimparAluno(){
+        loading.current.continuousStart();
+
         setNome(''); 
         setChamada(''); 
         setCurso(''); 
         setTurma(''); 
         setIdAlterando(0); 
 
+        loading.current.complete(); 
+
     }
 
     async function editar(item){
+        loading.current.complete(); 
+
         setNome(item.nm_aluno); 
         setChamada(item.nr_chamada); 
         setCurso(item.nm_curso); 
         setTurma(item.nm_turma); 
         setIdAlterando(item.id_matricula); 
+
+        loading.current.complete(); 
     }
 
 
