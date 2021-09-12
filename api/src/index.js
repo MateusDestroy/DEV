@@ -1,4 +1,4 @@
-import db from './db.js'; 
+import db from './db.js';
 
 import express from 'express'
 import cors from 'cors'
@@ -85,4 +85,4 @@ app.delete('/matricula/:id', async(req, resp) => {
 
 
 
-app.listen(process.env.PORT, x => console.log (`Subiu nossa API ${process.env.PORT}`))
+app.listen(process.env.PORT, x => console.log (`Boa subiu ${process.env.PORT}`))
