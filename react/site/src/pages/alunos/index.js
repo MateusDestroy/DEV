@@ -4,7 +4,7 @@ import Menu from '../../components/menu'
 
 import { Container, Conteudo } from './styled'
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, React, useRef } from 'react';
 
 import Api from '../../services/api'; 
 
@@ -12,10 +12,10 @@ import Api from '../../services/api';
 import {ToastContainer, toast} from 'react-toastify'; 
 import 'react-toastify/dist/ReactToastify.css';
 
-import {loading}  from 'loading-progress-bar';
+import LoadingBar  from 'react-top-loading-bar';
 
 import {confirmAlert} from 'react-confirm-alert'; 
-
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 
 
@@ -31,20 +31,23 @@ export default function Index() {
     const [curso, setCurso] = useState(''); 
 
 
-    const [idAlterando, setIdAlterando] = useState(0); 
+    const [idAlterando, setIdAlterando] = useState(0);
+    
+    let loading = useRef(null)
 
 
 
     async function listar(){
+        loading.current.continuousStart(); 
         let r = await api.listar(); 
         setAlunos(r); 
+
+        loading.current.complete(); 
     }
 
 
     async function inserir(){
-        loading.current.confirmAlert(); 
-
-
+    
         if( idAlterando == 0){
             let r = await api.inserir(nome, chamada, curso, turma); 
             if(r.error)
@@ -94,22 +97,48 @@ export default function Index() {
 
 
     async function remover(id ){
-        let r = await api.remover(id); 
-        alert('Aluno removido'); 
 
+        loading.current.continuousStart(); 
+
+        confirmAlert({
+            title: 'Retira Aluno', 
+            message: `Tem certeza que quer remover esse aluno feio ${id} ?`, 
+
+            buttons: [
+                {
+                    label: 'Sim', 
+                    onClick: async() => {
+                        let r = await api.remover(id);
+                        if(r.erro){
+                            toast.success(`${r.erro}`);
+                        }else{
+                            toast.success('retirado', {
+                                theme: "dark"
+                            }); 
+                            listar(); 
+                        }
+                    }
+                }, 
+                {
+                    label: 'Não'
+
+                }
+            ]
+        })
+
+        loading.current.complete(); 
         listar(); 
-
-    } 
-
+    }
 
 
     useEffect(() =>{
         listar(); 
     }, [])
 
+
     return (
-      
         <Container>
+            <LoadingBar color= "#583592" ref={loading}/>
             <ToastContainer/> 
             <Menu />
             <Conteudo>
